@@ -149,6 +149,7 @@ def cleanup():
         aws_access_key_id=KEY,
         aws_secret_access_key=SECRET,
     )
+    
     iam = boto3.client(
         "iam",
         region_name="us-west-2",

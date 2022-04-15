@@ -7,7 +7,7 @@ A startup named Sparkify released their music streaming app not long ago, and th
 In this project, I've implemented an ETL pipeline using Python to process the data from the 2 sources: song data and log data, under the format of *[JSON](https://en.wikipedia.org/wiki/JSON)* files.  
 
 ## How to run the project
-- Prequisite
+- Prequisites:
     - Have *[newest Python](https://www.python.org/)* (or at least 3.7) installed in your system (you can download it *[here](https://www.python.org/downloads/)*)
     - Install psycopg2 and boto3
     - An AWS account
@@ -40,15 +40,14 @@ In this project, I've implemented an ETL pipeline using Python to process the da
 
 Regarding the choice of schema, I chose the *[Star schema](https://en.wikipedia.org/wiki/Star_schema)* due to the fact that I want my queries to be simplier with fewer JOIN operations. Furthermore, aggregation can also benefit from it which might help Sparkify's analysts a lot.
 
-There lies the `songplay` fact table in the center of the schema surrounded by 4 dimension tables: `users`, `time`, `artists` and `songs`. Each of the 4 has its primary key acting as the foreign keys of `songplays`. Furthermore, there is the foreign key `artist_id` in relation `songs` which references the primary key of relation `artists`, this forms a star-like schema, just like its name.
+There lies the `songplay` fact table in the center of the schema surrounded by 4 dimension tables: `users`, `time`, `artists` and `songs`. Each of the 4 has its primary key acting as the foreign keys of `songplays`. Furthermore, there is the foreign key `artist_id` in relation `songs` which references the primary key of relation `artists`, this forms a star-like schema, just like its name. In addition to that, I set distribution style of the table `time`, `songs` and `artists` to be `ALL` since they are fairly small and can speed up the queries, whereas `users` and `songplays` are too big to do so.
 
 
-<!-- ![Sparkify Database Schema](/schema/schema.png "Sparkify Database Schema") -->
+![Sparkify Database Schema](/schema/schema.png "Sparkify Database Schema")
 
 This kind of schema allows the analysts to easily query the data directly from the `songplays` table, and for ad-hoc queries (queries that cannot be determined prior to the moment the query is issued), they simply just perform `JOIN` and some optional aggregation functions.
 
-## ETL Pipeline
-### Data type
+## DATASETS
 Here is a sample of 2 kinds of data that this database will perform ETL on, you can take a peek if you are interested as they are located in the subfolder `data` in `sources`
 
 ```
@@ -92,9 +91,6 @@ Here is a sample of 2 kinds of data that this database will perform ETL on, you 
    }
 }
 ```
-
-### The ETL process:
-
 ## Example queries
 
 1) Get the list of cities which have most **paid** users (for business strategies)
@@ -107,7 +103,7 @@ Here is a sample of 2 kinds of data that this database will perform ETL on, you 
       ORDER by listener_count DESC 
 ```
 
-<!-- <img src="/test_result/test_query/test_query-1.png" width="300" height="450"/> -->
+<img src="/test/test_query_1.png" width="450" height="450"/>
 
 2) From the results of the query above, let's find the average play per city
 
@@ -123,4 +119,4 @@ Here is a sample of 2 kinds of data that this database will perform ETL on, you 
             ) query_1
         ) query_2
 ```
-<!-- <img src="/test_result/test_query/test_query-2.png" width="200" height="60"/> -->
+<img src="/test/test_query_2.png" width="200" height="60"/>

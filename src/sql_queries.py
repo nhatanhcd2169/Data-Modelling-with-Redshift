@@ -68,9 +68,9 @@ staging_songs_table_create = """
 
 songplay_table_create = """
     CREATE TABLE IF NOT EXISTS songplays (
-            songplay_id         INT IDENTITY(0,1) PRIMARY KEY, 
+            songplay_id         INT IDENTITY(0,1)       PRIMARY KEY, 
             start_time          timestamp,
-            user_id             integer, 
+            user_id             integer                 DISTKEY, 
             level               varchar, 
             song_id             varchar, 
             artist_id           varchar, 
@@ -82,12 +82,12 @@ songplay_table_create = """
 
 user_table_create = """
     CREATE TABLE IF NOT EXISTS users (
-            user_id             integer PRIMARY KEY, 
+            user_id             integer PRIMARY KEY     DISTKEY, 
             first_name          varchar, 
             last_name           varchar, 
             gender              varchar, 
             level               varchar
-        ) diststyle all;
+        )
 """
 
 song_table_create = """
@@ -107,7 +107,7 @@ artist_table_create = """
             location            varchar, 
             latitude            numeric, 
             longitude           numeric
-        );
+        ) diststyle all;
 """
 
 
@@ -120,7 +120,7 @@ time_table_create = """
             month               integer, 
             year                integer, 
             weekday             integer
-        );
+        ) diststyle all;
 """
 
 # STAGING TABLES
@@ -166,7 +166,10 @@ user_table_insert = """
     FROM staging.staging_events AS se
     WHERE se.userId IS NOT NULL AND se.page = 'NextSong'
 """
+
 # https://www.sqltutorial.org/sql-window-functions/
+# https://www.sqltutorial.org/sql-window-functions/sql-first_value/
+
 song_table_insert = """
     INSERT INTO songs (song_id, title, artist_id, year, duration)
     SELECT DISTINCT ss.song_id, ss.title, ss.artist_id, ss.year, ss.duration
